@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SignUp from './components/SignUp';
+import Login from './components/Login';
+import EventList from './components/EventList';
+import EventDetails from './components/EventDetails';
+import ManageEvents from './components/ManageEvents';
+import CalendarView from './components/CalendarView';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute
+                element={EventDetails}
+                allowedRoles={['Admin', 'EventOrganizer', 'Participant']}
+              />
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <ProtectedRoute
+                element={EventList}
+                allowedRoles={['Admin', 'EventOrganizer', 'Participant']}
+              />
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute
+                element={CalendarView}
+                allowedRoles={['Admin', 'EventOrganizer', 'Participant']}
+              />
+            }
+          />
+          <Route
+            path="/manage-events"
+            element={
+              <ProtectedRoute
+                element={ManageEvents}
+                allowedRoles={['Admin', 'EventOrganizer']}
+              />
+            }
+          />
+          <Route path="/" element={<EventList />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
