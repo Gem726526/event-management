@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SignUp from './components/SignUp';
-import Login from './components/Login';
-import EventList from './components/EventList';
-import EventDetails from './components/EventDetails';
-import ManageEvents from './components/ManageEvents';
-import CalendarView from './components/CalendarView';
-import ProtectedRoute from './components/ProtectedRoute';
+import { SignUp } from './pages/Auth/SignUp';
+import { Login } from './pages/Auth/Login';
+import { EventList } from './pages/Events/EventList';
+import { Router as AppRouter } from './pages/Router'
+import { ManageEvents } from './pages/Events/ManageEvents';
+import { CalendarView } from './pages/Events/CalendarView';
+import { ProtectedRoute } from './pages/ProtectedRoute';
 
 const App = () => {
   return (
@@ -15,7 +15,7 @@ const App = () => {
         <Routes>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route
+          {/* <Route
             path="/events/:id"
             element={
               <ProtectedRoute
@@ -23,7 +23,7 @@ const App = () => {
                 allowedRoles={['Admin', 'EventOrganizer', 'Participant']}
               />
             }
-          />
+          /> */}
           <Route
             path="/events"
             element={
@@ -51,7 +51,7 @@ const App = () => {
               />
             }
           />
-          <Route path="/" element={<EventList />} />
+          <Route path="/" element={<AppRouter />} />
         </Routes>
       </div>
     </Router>

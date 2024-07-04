@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { inputFieldClassName } from '../../constants/classnames';
+import { SubmitButton } from '../../components/form/SubmitButton';
 
 const EventForm = ({ event, onSuccess }) => {
     const [title, setTitle] = useState(event ? event.title : '');
@@ -30,7 +32,7 @@ const EventForm = ({ event, onSuccess }) => {
                 <label className="block text-gray-700">Title:</label>
                 <input
                     type="text"
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
@@ -38,7 +40,7 @@ const EventForm = ({ event, onSuccess }) => {
             <div className="mb-4">
                 <label className="block text-gray-700">Description:</label>
                 <textarea
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
@@ -47,7 +49,7 @@ const EventForm = ({ event, onSuccess }) => {
                 <label className="block text-gray-700">Date:</label>
                 <input
                     type="date"
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                 />
@@ -56,7 +58,7 @@ const EventForm = ({ event, onSuccess }) => {
                 <label className="block text-gray-700">Location:</label>
                 <input
                     type="text"
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                 />
@@ -65,7 +67,7 @@ const EventForm = ({ event, onSuccess }) => {
                 <label className="block text-gray-700">Category:</label>
                 <input
                     type="text"
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                 />
@@ -74,14 +76,12 @@ const EventForm = ({ event, onSuccess }) => {
                 <label className="block text-gray-700">Tags:</label>
                 <input
                     type="text"
-                    className="w-full px-3 py-2 border rounded"
+                    className={inputFieldClassName}
                     value={tags}
                     onChange={(e) => setTags(e.target.value)}
                 />
             </div>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                {event ? 'Update Event' : 'Create Event'}
-            </button>
+            <SubmitButton buttonText={event ? 'Update Event' : 'Create Event'} />
         </form>
     );
 };

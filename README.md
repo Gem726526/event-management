@@ -19,18 +19,7 @@ The Event Management System is a web application that allows users to create, ma
 - Backend: Node.js, Express.js, MongoDB, Mongoose, JWT, Bcrypt
 - Email Notifications: Nodemailer
 
-## Setup Instructions
-
 ### Prerequisites
 
 - Node.js and npm installed
 - MongoDB installed and running
-
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your-username/event-management-system.git
-   cd event-management-system
-   ```

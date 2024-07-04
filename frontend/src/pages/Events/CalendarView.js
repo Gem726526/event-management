@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import axios from 'axios';
 import 'react-calendar/dist/Calendar.css';
+import { FormTitle } from '../../components/form/FormTitle';
 
-const CalendarView = () => {
+export const CalendarView = () => {
     const [date, setDate] = useState(new Date());
     const [events, setEvents] = useState([]);
 
@@ -28,24 +29,24 @@ const CalendarView = () => {
     };
 
     return (
-        <div className="container mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Calendar</h2>
-            <Calendar value={date} onChange={onChange} />
-            <div className="mt-4">
-                {events.length > 0 ? (
-                    events.map((event) => (
-                        <div key={event._id} className="mb-4">
-                            <h3 className="text-xl">{event.title}</h3>
-                            <p>{new Date(event.date).toLocaleDateString()}</p>
-                            <p>{event.description}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p>No events for this month.</p>
-                )}
+        <div className="w-full h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
+            <div className='card w-[600px] border-1 border p-6 bg-[#ffffff]'>
+                <FormTitle title='Calendar' />
+                <Calendar value={date} onChange={onChange} />
+                <div className="mt-4">
+                    {events.length > 0 ? (
+                        events.map((event) => (
+                            <div key={event._id} className="mb-4">
+                                <h3 className="text-xl">{event.title}</h3>
+                                <p>{new Date(event.date).toLocaleDateString()}</p>
+                                <p>{event.description}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No events for this month.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
-
-export default CalendarView;
