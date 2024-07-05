@@ -1,39 +1,30 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const protect = async (req, res, next) => {
+exports.protect = async (req, res, next) => {
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        try {
-            token = req.headers.authorization.split(' ')[1];
-            const decoded = jwt.verify(token, 'your_jwt_secret');
-            req.user = await User.findById(decoded.id).select('-password');
-            next();
-        } catch (error) {
-            res.status(401).json({ error: 'Not authorized, token failed' });
-        }
+        token = req.headers.authorization.split(' ')[1];
     }
 
     if (!token) {
-        res.status(401).json({ error: 'Not authorized, no token' });
+        return res.status(401).json({ success: false, message: 'Not authorized, no token' });
     }
-};
 
-const admin = (req, res, next) => {
-    if (req.user && req.user.role === 'Admin') {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id).select('-password');
         next();
-    } else {
-        res.status(403).json({ error: 'Not authorized as an admin' });
+    } catch (error) {
+        return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
     }
 };
 
-const eventOrganizer = (req, res, next) => {
-    if (req.user && (req.user.role === 'Admin' || req.user.role === 'EventOrganizer')) {
+exports.authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ success: false, message: 'User role not authorized' });
+        }
         next();
-    } else {
-        res.status(403).json({ error: 'Not authorized as an event organizer' });
-    }
+    };
 };
-
-module.exports = { protect, admin, eventOrganizer };
-

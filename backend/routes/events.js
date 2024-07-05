@@ -1,47 +1,66 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const { protect, admin } = require('../middleware/auth');
-
 const router = express.Router();
+const Event = require('../models/Event');
+const { protect, authorize } = require('../middleware/auth');
 
-router.post('/signup', async (req, res) => {
-    const { email, password, role } = req.body;
+// Create an event
+router.post('/', protect, authorize('Admin', 'EventOrganizer'), async (req, res) => {
+    const { title, description, date, location, category, tags } = req.body;
     try {
-        const user = await User.create({ email, password, role });
-        const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
-        res.json({ token });
+        const newEvent = new Event({ title, description, date, location, category, tags });
+        await newEvent.save();
+        res.status(201).json({ success: true, data: newEvent });
     } catch (error) {
-        res.status(400).json({ error: 'User already exists' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+// Get all events
+router.get('/', async (req, res) => {
     try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ error: 'Invalid credentials' });
-        }
-        const isMatch = await user.matchPassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid credentials' });
-        }
-        const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
-        res.json({ token });
+        const events = await Event.find();
+        res.json({ success: true, data: events });
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
-// Get all users (Admin only)
-router.get('/users', protect, admin, async (req, res) => {
+// Get a single event
+router.get('/:id', async (req, res) => {
     try {
-        const users = await User.find().select('-password');
-        res.json(users);
+        const event = await Event.findById(req.params.id);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+        res.json({ success: true, data: event });
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching users' });
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Update an event
+router.put('/:id', protect, authorize('Admin', 'EventOrganizer'), async (req, res) => {
+    try {
+        const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+        res.json({ success: true, data: event });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Delete an event
+router.delete('/:id', protect, authorize('Admin'), async (req, res) => {
+    try {
+        const event = await Event.findByIdAndDelete(req.params.id);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+        res.json({ success: true, message: 'Event deleted' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
